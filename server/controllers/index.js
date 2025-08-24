@@ -4,6 +4,7 @@ const EnrollmentController = require("./EnrollmentController");
 const ModuleController = require("./ModuleController");
 const SubmissionController = require("./SubmissionController");
 const UserController = require("./UserController");
+const AuthController = require("./AuthController")
 
 module.exports = {
   CheckpointController,
@@ -12,4 +13,5 @@ module.exports = {
   ModuleController,
   SubmissionController,
   UserController,
+  AuthController,
 };

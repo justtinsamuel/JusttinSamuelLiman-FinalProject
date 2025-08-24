@@ -1,35 +1,32 @@
 const { User } = require("../models");
 
 class UserController {
-  static async getUsers(req, res) {
+  static async getUsers(req, res, next) {
     try {
       const result = await User.findAll({
         where: { is_deleted: false },
       });
       res.json(result);
     } catch (err) {
-      res.status(500).json({
-        err: err.message,
-      });
+      next(err); // lempar error ke middleware
     }
   }
 
-  static async getUserById(req, res) {
+  static async getUserById(req, res, next) {
     try {
       const { id } = req.params;
       const result = await User.findOne({
         where: { id, is_deleted: false },
       });
-      if (!result) return res.status(404).json({ message: `Data not found` });
+      if (!result) return res.status(404).json({ message: "Data not found" });
+
       res.json(result);
     } catch (err) {
-      res.status(500).json({
-        err: err.message,
-      });
+      next(err);
     }
   }
 
-  static async createUser(req, res) {
+  static async createUser(req, res, next) {
     try {
       const { name, email, password, role } = req.body;
       const newUser = await User.create({
@@ -38,46 +35,49 @@ class UserController {
         password,
         role,
       });
-      res.status(200).json(newUser);
-    } catch (err) {
-      res.status(500).json({
-        err: err.message,
+      res.status(201).json({
+        message: "User created successfully",
+        user: newUser,
       });
+    } catch (err) {
+      next(err);
     }
   }
 
-  static async updateUser(req, res) {
+  static async updateUser(req, res, next) {
     try {
       const { id } = req.params;
       const { name, email, role } = req.body;
-      const result = await User.findOne({ where: id, is_deleted: false });
-      if (!result) return res.status(404).json({ message: `Data not found` });
+      const result = await User.findOne({ where: { id, is_deleted: false } });
+      if (!result) return res.status(404).json({ message: "Data not found" });
 
-      await result.update({
-        name,
-        email,
-        role,
-      });
-      res.json(result);
+      await result.update({ name, email, role });
+
+      const userSafe = {
+        id: result.id,
+        name: result.name,
+        email: result.email,
+        role: result.role,
+      };
+
+      res.json({ message: "User updated successfully", user: userSafe });
     } catch (err) {
-      res.status(500).json({ err: err.message });
+      next(err);
     }
   }
 
-  static async deleteUser(req, res) {
+  static async deleteUser(req, res, next) {
     try {
       const { id } = req.params;
       const result = await User.findOne({
         where: { id, is_deleted: false },
       });
-      if (!result) return res.status(404).json({ message: `Data not found` });
+      if (!result) return res.status(404).json({ message: "Data not found" });
 
       await result.update({ is_deleted: true });
-      res.json({ message: `Data successfully deleted` });
+      res.json({ message: "Data successfully deleted" });
     } catch (err) {
-      res.status(500).json({
-        err: err.message,
-      });
+      next(err);
     }
   }
 }
