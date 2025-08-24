@@ -9,9 +9,9 @@ const userRoutes = require("./userRoutes");
 const authRoutes = require("./authRoutes");
 
 // router.use("/checkpoint", checkpointRoutes);
-// router.use("/courses", courseRoutes);
+router.use("/courses", courseRoutes);
 // router.use("/enrollments", enrollmentRoutes);
-// router.use("/modules", moduleRoutes);
+router.use("/modules", moduleRoutes);
 // router.use("/submissions", submissionRoutes);
 router.use("/users", userRoutes);
 router.use("/auth", authRoutes)

@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Submission",
+      timestamps: true,
     }
   );
   return Submission;
