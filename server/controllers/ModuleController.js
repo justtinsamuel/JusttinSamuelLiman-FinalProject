@@ -28,11 +28,11 @@ class ModuleController {
 
   static async createModule(req, res, next) {
     try {
-      const { title, content, contentType } = req.body;
+      const { title, content, content_type } = req.body;
       const newModule = await Module.create({
         title,
         content,
-        contentType,
+        content_type,
       });
       res.status(201).json({
         message: "Module created successfully",
@@ -46,11 +46,11 @@ class ModuleController {
   static async updateModule(req, res, next) {
     try {
       const { id } = req.params;
-      const { title, content, contentType } = req.body;
+      const { title, content, content_type } = req.body;
       const result = await Module.findOne({ where: { id, is_deleted: false } });
       if (!result) return res.status(404).json({ message: "Data not found" });
 
-      await result.update({ title, content, contentType });
+      await result.update({ title, content, content_type });
 
       res.json({ message: "Module updated successfully", result });
     } catch (err) {
