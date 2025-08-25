@@ -15,8 +15,13 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "CourseId",
         otherKey: "UserId",
       });
-      Course.hasMany(models.CourseModule, { foreignKey: "CourseId" });
-      Course.hasMany(models.Checkpoint, { foreignKey: "CourseId" });
+      Course.hasMany(models.CourseModule, {
+        foreignKey: "CourseId",
+        otherKey: "ModuleId",
+      });
+      Course.hasMany(models.Checkpoint, {
+        foreignKey: "CourseId",
+      });
     }
   }
   Course.init(

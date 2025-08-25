@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "UserId",
         otherKey: "CourseId",
       });
+      User.belongsToMany(models.Checkpoint, {
+        through: models.Submission,
+        foreignKey: "UserId",
+        otherKey: "CheckpointId",
+      });
       User.hasMany(models.Submission, { foreignKey: "UserId" });
     }
 

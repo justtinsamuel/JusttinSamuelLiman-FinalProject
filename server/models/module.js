@@ -11,6 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       Module.hasMany(models.CourseModule, { foreignKey: "ModuleId" });
+      Module.belongsToMany(models.Course, {
+        through: models.CourseModule,
+        foreignKey: "ModuleId",
+        otherKey: "CourseId",
+      });
     }
   }
   Module.init(

@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: `CheckpointId`,
         otherKey: `UserId`,
       });
+      
     }
   }
   Checkpoint.init(
