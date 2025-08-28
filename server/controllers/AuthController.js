@@ -87,7 +87,11 @@ class AuthController {
 
   static async me(req, res, next) {
     try {
-      res.json(req.user);
+      // ❌ sementara kalau auth dimatiin, req.user bakal undefined
+      // res.json(req.user);
+
+      // ✅ bisa diganti hardcode user dummy biar gak error
+      res.json({ message: "Auth dimatikan sementara, tidak ada user aktif" });
     } catch (err) {
       next(err);
     }

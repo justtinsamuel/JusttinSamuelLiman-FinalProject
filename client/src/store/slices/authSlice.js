@@ -1,44 +1,51 @@
+// src/store/slices/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
-const URL = "http://localhost:3000/auth/login";
-
-// Ambil data dari localStorage pas awal
-const savedAuth = JSON.parse(localStorage.getItem("auth")) || null;
-
+// Async thunk untuk login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async ({ email, password }, thunkAPI) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(URL, { email, password });
-      return response.data; // { user, token }
+      const response = await axiosInstance.post("/auth/login", { email, password });
+      return response.data; // misal backend return { token, user }
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || "Login failed");
+      return rejectWithValue(error.response?.data || "Login failed");
     }
   }
 );
 
-const initialState = savedAuth || {
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  loading: false,
-  error: null,
-};
+// Async thunk untuk register
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async ({ name, email, password }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/auth/register", { name, email, password });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Registration failed");
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
-  initialState,
+  initialState: {
+    user: null,
+    token: null,
+    loading: false,
+    error: null,
+  },
   reducers: {
     logout: (state) => {
       state.user = null;
       state.token = null;
-      state.isAuthenticated = false;
-      localStorage.removeItem("auth"); // clear storage
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
+      // Login
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -47,19 +54,22 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        state.isAuthenticated = true;
-
-        // Simpan ke localStorage
-        localStorage.setItem(
-          "auth",
-          JSON.stringify({
-            user: action.payload.user,
-            token: action.payload.token,
-            isAuthenticated: true,
-          })
-        );
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Register
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
