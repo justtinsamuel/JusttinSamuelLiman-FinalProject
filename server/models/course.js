@@ -8,17 +8,22 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
       Course.hasMany(models.Enrollment, { foreignKey: "CourseId" });
+
       Course.belongsToMany(models.User, {
         through: models.Enrollment,
         foreignKey: "CourseId",
         otherKey: "UserId",
       });
-      Course.hasMany(models.CourseModule, {
+      Course.hasMany(models.CourseModule, { foreignKey: "CourseId" });
+
+      // relasi many-to-many dengan Module
+      Course.belongsToMany(models.Module, {
+        through: models.CourseModule,
         foreignKey: "CourseId",
         otherKey: "ModuleId",
       });
+
       Course.hasMany(models.Checkpoint, {
         foreignKey: "CourseId",
       });

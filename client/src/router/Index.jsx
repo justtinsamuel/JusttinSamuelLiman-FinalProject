@@ -8,6 +8,7 @@ import Enrollments from "../pages/Enrollments";
 import Modules from "../pages/Modules";
 import Submissions from "../pages/Submissions";
 import Users from "../pages/Users";
+import CourseDetail from "../pages/CourseDetail";
 
 export default function AppRouter() {
   return (
@@ -19,7 +20,11 @@ export default function AppRouter() {
       <Route element={<MainLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/checkpoints" element={<Checkpoints />} />
+
+        {/* Courses list & detail */}
         <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/:id" element={<CourseDetail />} />
+
         <Route path="/enrollments" element={<Enrollments />} />
         <Route path="/modules" element={<Modules />} />
         <Route path="/submissions" element={<Submissions />} />

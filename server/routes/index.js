@@ -7,6 +7,7 @@ const moduleRoutes = require("./moduleRoutes");
 const submissionRoutes = require("./submissionRoutes");
 const userRoutes = require("./userRoutes");
 const authRoutes = require("./authRoutes");
+const courseModuleRoutes = require("./courseModuleRoutes");
 
 router.use("/checkpoints", checkpointRoutes);
 router.use("/courses", courseRoutes);
@@ -15,5 +16,6 @@ router.use("/modules", moduleRoutes);
 router.use("/submissions", submissionRoutes);
 router.use("/users", userRoutes);
 router.use("/auth", authRoutes);
+router.use("/course-modules", courseModuleRoutes);
 
 module.exports = router;

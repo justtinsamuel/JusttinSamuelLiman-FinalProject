@@ -16,7 +16,7 @@ courseRouter.get(
   CourseController.getCourseById
 );
 courseRouter.post(
-  "/add",
+  "/",
   // authorize("admin"),
   CourseController.createCourse
 );

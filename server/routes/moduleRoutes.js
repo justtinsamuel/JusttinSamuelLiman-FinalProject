@@ -16,7 +16,7 @@ moduleRouter.get(
   ModuleController.getModuleById
 );
 moduleRouter.post(
-  "/add",
+  "/",
   // authorize("admin"),
   ModuleController.createModule
 );

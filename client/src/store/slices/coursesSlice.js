@@ -15,6 +15,22 @@ export const fetchCourses = createAsyncThunk(
   }
 );
 
+// Fetch detail course by id
+export const fetchCourseDetail = createAsyncThunk(
+  "courses/fetchCourseDetail",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/courses/${id}`);
+      // pastikan backend endpoint /courses/:id sudah include modules
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch course detail"
+      );
+    }
+  }
+);
+
 // Tambah course baru
 export const addCourse = createAsyncThunk(
   "courses/addCourse",
@@ -58,35 +74,98 @@ const coursesSlice = createSlice({
   name: "courses",
   initialState: {
     items: [],
+    detail: null,
     loading: false,
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch
-      .addCase(fetchCourses.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(fetchCourses.fulfilled, (state, action) => { state.loading = false; state.items = action.payload; })
-      .addCase(fetchCourses.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
-      // Add
-      .addCase(addCourse.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(addCourse.fulfilled, (state, action) => { state.loading = false; state.items.push(action.payload); })
-      .addCase(addCourse.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
-      // Update
-      .addCase(updateCourse.pending, (state) => { state.loading = true; state.error = null; })
+      // fetch all
+      .addCase(fetchCourses.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCourses.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+      })
+      .addCase(fetchCourses.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      })
+
+      // fetch detail
+      .addCase(fetchCourseDetail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCourseDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.detail = action.payload;
+      })
+      .addCase(fetchCourseDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      })
+
+      // ===== Add =====
+      .addCase(addCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addCourse.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload) {
+          state.items.push(action.payload); // asumsi payload = course baru
+        }
+      })
+      .addCase(addCourse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      })
+
+      // ===== Update =====
+      .addCase(updateCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateCourse.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.items.findIndex(item => item.id === action.payload.id);
-        if (index !== -1) state.items[index] = action.payload;
+        if (action.payload && action.payload.id) {
+          const index = state.items.findIndex(
+            (item) => item.id === action.payload.id
+          );
+          if (index !== -1) {
+            state.items[index] = {
+              ...state.items[index],
+              ...action.payload, // supaya tidak hilang field lain
+            };
+          }
+        }
       })
-      .addCase(updateCourse.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
-      // Delete
-      .addCase(deleteCourse.pending, (state) => { state.loading = true; state.error = null; })
+      .addCase(updateCourse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      })
+
+      // ===== Delete =====
+      .addCase(deleteCourse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(deleteCourse.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = state.items.filter(item => item.id !== action.payload);
+        const deletedId =
+          typeof action.payload === "object"
+            ? action.payload.id
+            : action.payload;
+        state.items = state.items.filter((item) => item.id !== deletedId);
       })
-      .addCase(deleteCourse.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
+      .addCase(deleteCourse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      });
   },
 });
 

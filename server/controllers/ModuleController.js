@@ -34,10 +34,7 @@ class ModuleController {
         content,
         content_type,
       });
-      res.status(201).json({
-        message: "Module created successfully",
-        Module: newModule,
-      });
+      res.status(201).json(newModule);
     } catch (err) {
       next(err);
     }
@@ -52,7 +49,7 @@ class ModuleController {
 
       await result.update({ title, content, content_type });
 
-      res.json({ message: "Module updated successfully", result });
+      res.json(result);
     } catch (err) {
       next(err);
     }

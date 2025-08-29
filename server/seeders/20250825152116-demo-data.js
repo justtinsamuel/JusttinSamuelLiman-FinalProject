@@ -2,43 +2,6 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // USERS
-    await queryInterface.bulkInsert("Users", [
-      {
-        name: "Admin User",
-        email: "admin@example.com",
-        password: "hashedpassword",
-        role: "admin",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        name: "Student One",
-        email: "student1@example.com",
-        password: "hashedpassword",
-        role: "student",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        name: "Student Two",
-        email: "student2@example.com",
-        password: "hashedpassword",
-        role: "student",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
-
-    // ambil ID Users
-    const users = await queryInterface.sequelize.query(
-      `SELECT id, email FROM "Users";`
-    );
-    const userRows = users[0];
-    const admin = userRows.find((u) => u.email === "admin@example.com");
-    const student1 = userRows.find((u) => u.email === "student1@example.com");
-    const student2 = userRows.find((u) => u.email === "student2@example.com");
-
     // COURSES
     await queryInterface.bulkInsert("Courses", [
       {
@@ -66,21 +29,29 @@ module.exports = {
     await queryInterface.bulkInsert("Modules", [
       {
         title: "JavaScript Basics",
+        content: "Intro ke JavaScript",
+        content_type: "text",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "Express & Sequelize",
+        content: "Belajar backend dengan Express dan Sequelize",
+        content_type: "text",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "React Fundamentals",
+        content: "Belajar dasar React",
+        content_type: "text",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "Python for Data Science",
+        content: "Belajar Python untuk data science",
+        content_type: "text",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -95,29 +66,33 @@ module.exports = {
     const reactModule = moduleRows.find((m) => m.title.includes("React"));
     const pythonModule = moduleRows.find((m) => m.title.includes("Python"));
 
-    // COURSE_MODULES
+    // COURSE_MODULES (relasi Course ↔ Module)
     await queryInterface.bulkInsert("CourseModules", [
       {
         CourseId: course1.id,
         ModuleId: jsModule.id,
+        order_index: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         CourseId: course1.id,
         ModuleId: expressModule.id,
+        order_index: 2,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         CourseId: course1.id,
         ModuleId: reactModule.id,
+        order_index: 3,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         CourseId: course2.id,
         ModuleId: pythonModule.id,
+        order_index: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -128,76 +103,27 @@ module.exports = {
       {
         title: "Quiz JavaScript",
         CourseId: course1.id,
+        type: "quiz",
         max_score: 100,
+        submission_type: "form",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "Mini Project Express",
         CourseId: course1.id,
+        type: "project",
         max_score: 100,
+        submission_type: "repo",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "Quiz Python",
         CourseId: course2.id,
+        type: "quiz",
         max_score: 100,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
-
-    const checkpoints = await queryInterface.sequelize.query(
-      `SELECT id, title FROM "Checkpoints";`
-    );
-    const checkpointRows = checkpoints[0];
-    const quizJS = checkpointRows.find((c) => c.title.includes("JavaScript"));
-    const miniExpress = checkpointRows.find((c) => c.title.includes("Express"));
-
-    // ENROLLMENTS
-    await queryInterface.bulkInsert("Enrollments", [
-      {
-        UserId: student1.id,
-        CourseId: course1.id,
-        status: "active",
-        progress: 50,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        UserId: student2.id,
-        CourseId: course1.id,
-        status: "active",
-        progress: 20,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        UserId: student2.id,
-        CourseId: course2.id,
-        status: "active",
-        progress: 0,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]);
-
-    // SUBMISSIONS
-    await queryInterface.bulkInsert("Submissions", [
-      {
-        UserId: student1.id,
-        CheckpointId: quizJS.id,
-        submission_link: "http://github.com/student1/js-quiz",
-        grade: 90,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        UserId: student2.id,
-        CheckpointId: miniExpress.id,
-        submission_link: "http://github.com/student2/express-mini",
-        grade: 75,
+        submission_type: "form",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -205,12 +131,9 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("Submissions", null, {});
-    await queryInterface.bulkDelete("Enrollments", null, {});
     await queryInterface.bulkDelete("Checkpoints", null, {});
     await queryInterface.bulkDelete("CourseModules", null, {});
     await queryInterface.bulkDelete("Modules", null, {});
     await queryInterface.bulkDelete("Courses", null, {});
-    await queryInterface.bulkDelete("Users", null, {});
   },
 };

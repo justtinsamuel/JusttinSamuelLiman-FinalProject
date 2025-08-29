@@ -1,10 +1,27 @@
-const { Course } = require("../models");
+const {
+  Course,
+  CourseModule,
+  Module,
+  Checkpoint,
+  Enrollment,
+  User,
+} = require("../models");
 
 class CourseController {
   static async getCourses(req, res, next) {
     try {
       const result = await Course.findAll({
         where: { is_deleted: false },
+        include: [
+          {
+            model: CourseModule,
+            include: [
+              {
+                model: Module,
+              },
+            ],
+          },
+        ],
       });
       res.json(result);
     } catch (err) {
@@ -17,12 +34,32 @@ class CourseController {
       const { id } = req.params;
       const result = await Course.findOne({
         where: { id, is_deleted: false },
+        include: [
+          {
+            model: CourseModule,
+            include: [
+              {
+                model: Module,
+                include: [Checkpoint],
+              },
+            ],
+          },
+          {
+            model: Enrollment,
+            include: [User],
+          },
+        ],
       });
+
       if (!result) return res.status(404).json({ message: "Data not found" });
 
       res.json(result);
     } catch (err) {
-      next(err);
+      console.error(`Error`, err);
+      res
+        .status(500)
+        .json({ message: "internal server error", error: err.message });
+      // next(err);
     }
   }
 
@@ -33,10 +70,7 @@ class CourseController {
         title,
         description,
       });
-      res.status(201).json({
-        message: "Course created successfully",
-        Course: newCourse,
-      });
+      res.status(201).json(newCourse);
     } catch (err) {
       next(err);
     }
@@ -51,7 +85,7 @@ class CourseController {
 
       await result.update({ title, description });
 
-      res.json({ message: "Course updated successfully", result });
+      res.json(result);
     } catch (err) {
       next(err);
     }
