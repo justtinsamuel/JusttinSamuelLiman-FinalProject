@@ -1,27 +1,51 @@
+// models/courseModule.js
 "use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class CourseModule extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
       CourseModule.belongsTo(models.Course, { foreignKey: "CourseId" });
       CourseModule.belongsTo(models.Module, { foreignKey: "ModuleId" });
     }
   }
+
   CourseModule.init(
     {
-      order_index: DataTypes.INTEGER,
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      CourseId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Courses",
+          key: "id",
+        },
+      },
+      ModuleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Modules",
+          key: "id",
+        },
+      },
     },
     {
       sequelize,
       modelName: "CourseModule",
-      timestamps: true,
+      tableName: "CourseModules",
+      indexes: [
+        {
+          unique: true,
+          fields: ["CourseId", "ModuleId"], // supaya tidak ada duplikat
+        },
+      ],
     }
   );
+
   return CourseModule;
 };

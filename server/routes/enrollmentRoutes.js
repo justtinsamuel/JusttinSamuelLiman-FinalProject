@@ -10,12 +10,12 @@ enrollmentRoutes.get(
   EnrollmentController.getEnrollments
 );
 enrollmentRoutes.get(
-  "/:id",
+  "/user/:UserId",
   // authorize("admin"),
   EnrollmentController.getEnrollmentByUser
 );
 enrollmentRoutes.post(
-  "/add",
+  "/",
   // authorize("admin"),
   EnrollmentController.createEnrollment
 );

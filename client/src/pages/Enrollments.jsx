@@ -1,13 +1,22 @@
 // src/pages/Enrollment.jsx
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEnrollments, addEnrollment, updateEnrollment, deleteEnrollment } from "../store/slices/enrollmentsSlice";
+import {
+  fetchEnrollments,
+  addEnrollment,
+  updateEnrollment,
+  deleteEnrollment,
+} from "../store/slices/enrollmentsSlice";
 import { fetchCourses } from "../store/slices/coursesSlice";
 import { fetchUsers } from "../store/slices/usersSlice"; // pastikan kamu punya userSlice
 
 export default function Enrollment() {
   const dispatch = useDispatch();
-  const { items: enrollments, loading, error } = useSelector((state) => state.enrollments);
+  const {
+    items: enrollments,
+    loading,
+    error,
+  } = useSelector((state) => state.enrollments);
   const { items: courses } = useSelector((state) => state.courses);
   const { items: users } = useSelector((state) => state.users);
 
@@ -60,7 +69,9 @@ export default function Enrollment() {
         >
           <option value="">Select User</option>
           {users.map((user) => (
-            <option key={user.id} value={user.id}>{user.name}</option>
+            <option key={user.id} value={user.id}>
+              {user.name}
+            </option>
           ))}
         </select>
 
@@ -72,7 +83,9 @@ export default function Enrollment() {
         >
           <option value="">Select Course</option>
           {courses.map((course) => (
-            <option key={course.id} value={course.id}>{course.title}</option>
+            <option key={course.id} value={course.id}>
+              {course.title}
+            </option>
           ))}
         </select>
 
@@ -83,8 +96,13 @@ export default function Enrollment() {
 
       <ul className="space-y-2">
         {enrollments.map((enrollment) => (
-          <li key={enrollment.id} className="flex justify-between items-center border p-2 rounded">
-            <span>{`User ${enrollment.UserId} enrolled in Course ${enrollment.CourseId}`}</span>
+          <li
+            key={enrollment.id || `${enrollment.UserId}-${enrollment.CourseId}`}
+            className="flex justify-between items-center border p-2 rounded"
+          >
+            <span>
+              {`User ${enrollment.UserId} enrolled in Course ${enrollment.CourseId}`}
+            </span>
             <div className="flex gap-2">
               <button
                 onClick={() => handleEdit(enrollment)}
