@@ -8,7 +8,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/auth/login", { email, password });
-      return response.data; // misal backend return { token, user }
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Login failed");
     }

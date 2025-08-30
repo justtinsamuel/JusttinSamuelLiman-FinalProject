@@ -8,7 +8,7 @@ export const fetchModules = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/modules");
-      return response.data; // misal array modules
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to fetch modules");
     }

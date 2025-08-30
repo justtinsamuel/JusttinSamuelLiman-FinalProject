@@ -8,7 +8,7 @@ export const fetchCheckpoints = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/checkpoints");
-      return response.data; // misal array checkpoint
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to fetch checkpoints");
     }

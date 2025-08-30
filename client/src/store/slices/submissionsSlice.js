@@ -8,7 +8,7 @@ export const fetchSubmissions = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/submissions");
-      return response.data; // misal array submissions { id, UserId, ModuleId, status, score }
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to fetch submissions");
     }

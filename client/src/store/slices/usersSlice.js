@@ -8,7 +8,7 @@ export const fetchUsers = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/users");
-      return response.data; // misal array user { id, name, email, role }
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to fetch users");
     }

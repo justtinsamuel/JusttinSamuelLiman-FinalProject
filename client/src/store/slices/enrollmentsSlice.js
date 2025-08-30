@@ -8,7 +8,7 @@ export const fetchEnrollments = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/enrollments");
-      return response.data; // misal array enrollment { id, UserId, CourseId, status }
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to fetch enrollments");
     }
