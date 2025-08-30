@@ -1,53 +1,102 @@
 // src/pages/Modules.jsx
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchModules,
-  addModule,
-  updateModule,
-  deleteModule,
-} from "../store/slices/modulesSlice";
-import { fetchCourses } from "../store/slices/coursesSlice";
+import axiosInstance from "../utils/axiosInstance";
 
 export default function Modules() {
-  const dispatch = useDispatch();
-  const { items: modules, loading, error } = useSelector((state) => state.modules);
-  const { items: courses } = useSelector((state) => state.courses);
+  const [modules, setModules] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const [title, setTitle] = useState("");
-  const [courseId, setCourseId] = useState("");
+  const [content, setContent] = useState("");
+  const [content_type, setContent_type] = useState("");
   const [editingId, setEditingId] = useState(null);
 
-  useEffect(() => {
-    dispatch(fetchModules());
-    dispatch(fetchCourses());
-  }, [dispatch]);
+  const [viewModule, setViewModule] = useState(null); // modal state
+  const [viewMode, setViewMode] = useState("list"); // "list" | "table"
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const data = { title, CourseId: courseId };
-    if (editingId) {
-      dispatch(updateModule({ id: editingId, data }));
-      setEditingId(null);
-    } else {
-      dispatch(addModule(data));
+  // fetch modules & courses
+  const fetchModules = async () => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.get("/modules");
+      setModules(res.data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch modules");
+      setLoading(false);
     }
-    setTitle("");
-    setCourseId("");
+  };
+
+  const fetchCourses = async () => {
+    try {
+      const res = await axiosInstance.get("/courses");
+      setCourses(res.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch courses");
+    }
+  };
+
+  useEffect(() => {
+    fetchModules();
+    fetchCourses();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = { title, content, content_type };
+
+    try {
+      if (editingId) {
+        await axiosInstance.put(`/modules/${editingId}`, data);
+      } else {
+        await axiosInstance.post("/modules", data);
+      }
+      setTitle("");
+      setContent("");
+      setContent_type("");
+      setEditingId(null);
+      fetchModules(); // refresh list
+    } catch (err) {
+      console.error(err);
+      setError("Failed to save module");
+    }
   };
 
   const handleEdit = (module) => {
     setEditingId(module.id);
     setTitle(module.title);
-    setCourseId(module.CourseId);
+    setContent(module.content);
+    setContent_type(module.content_type);
   };
 
-  const handleDelete = (id) => {
-    dispatch(deleteModule(id));
+  const handleDelete = async (id) => {
+    try {
+      await axiosInstance.delete(`/modules/${id}`);
+      fetchModules();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to delete module");
+    }
   };
+
+  const handleView = async (id) => {
+    try {
+      const res = await axiosInstance.get(`/modules/${id}`);
+      setViewModule(res.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch module");
+    }
+  };
+
+  const closeModal = () => setViewModule(null);
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6">
+    <div className="max-w-4xl mx-auto mt-10 p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">Modules</h1>
 
       {error && <p className="text-red-600 mb-2">{error}</p>}
@@ -66,21 +115,22 @@ export default function Modules() {
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
-
-        <select
-          value={courseId}
-          onChange={(e) => setCourseId(e.target.value)}
+        <input
+          type="text"
+          placeholder="Content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
-        >
-          <option value="">Select Course</option>
-          {courses.map((course) => (
-            <option key={course.id} value={course.id}>
-              {course.title}
-            </option>
-          ))}
-        </select>
-
+        />
+        <input
+          type="text"
+          placeholder="Content Type"
+          value={content_type}
+          onChange={(e) => setContent_type(e.target.value)}
+          className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
         <button
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
@@ -89,39 +139,131 @@ export default function Modules() {
         </button>
       </form>
 
-      {/* List */}
-      <div className="grid gap-4">
-        {modules.map((module) => (
-          <div
-            key={module.id}
-            className="flex justify-between items-center bg-white p-4 shadow rounded-lg"
-          >
-            <div>
-              <h2 className="font-semibold text-lg">{module.title}</h2>
-              <p className="text-sm text-gray-500">
-                Course:{" "}
-                {courses.find((c) => c.id === module.CourseId)?.title ||
-                  `ID ${module.CourseId}`}
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEdit(module)}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(module.id)}
-                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
+      {/* Toggle View */}
+      <div className="flex justify-end mb-4 gap-2">
+        <button
+          onClick={() => setViewMode("list")}
+          className={`px-3 py-1 rounded ${
+            viewMode === "list"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 text-gray-700"
+          }`}
+        >
+          List View
+        </button>
+        <button
+          onClick={() => setViewMode("table")}
+          className={`px-3 py-1 rounded ${
+            viewMode === "table"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 text-gray-700"
+          }`}
+        >
+          Table View
+        </button>
       </div>
+
+      {/* List View */}
+      {viewMode === "list" && (
+        <div className="grid gap-4">
+          {modules.map((module) => (
+            <div
+              key={module.id}
+              className="flex justify-between items-center bg-white p-4 shadow rounded-lg"
+            >
+              <div>
+                <h2 className="font-semibold text-lg">{module.title}</h2>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleView(module.id)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => handleEdit(module)}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(module.id)}
+                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Table View */}
+      {viewMode === "table" && (
+        <div className="overflow-x-auto">
+          <table className="min-w-full border rounded shadow-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-4 py-2 border">Title</th>
+                <th className="px-4 py-2 border">Content</th>
+                <th className="px-4 py-2 border">Content Type</th>
+                <th className="px-4 py-2 border">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {modules.map((module) => (
+                <tr key={module.id} className="text-center">
+                  <td className="px-4 py-2 border">{module.title}</td>
+                  <td className="px-4 py-2 border">{module.content}</td>
+                  <td className="px-4 py-2 border">{module.content_type}</td>
+                  <td className="px-4 py-2 border space-x-2">
+                    <button
+                      onClick={() => handleView(module.id)}
+                      className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => handleEdit(module)}
+                      className="px-3 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(module.id)}
+                      className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Modal */}
+      {viewModule && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full relative">
+            <h2 className="text-xl font-bold mb-4">{viewModule.title}</h2>
+            <p>
+              <strong>Content:</strong> {viewModule.content}
+            </p>
+            <p>
+              <strong>Content Type:</strong> {viewModule.content_type}
+            </p>
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+            >
+              X
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

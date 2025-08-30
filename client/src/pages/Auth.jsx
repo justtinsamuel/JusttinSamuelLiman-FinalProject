@@ -25,7 +25,7 @@ export default function Auth() {
         setUser(res.data.user);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Login Failed.\n Pastikan Email dan Password Anda sudah sesuai.");
       setUser(null);
     } finally {
       setLoading(false);

@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
   Module.init(
     {
       title: DataTypes.STRING,
-      content: DataTypes.TEXT,
+      content: DataTypes.STRING,
       content_type: DataTypes.STRING,
       is_deleted: DataTypes.BOOLEAN,
     },
