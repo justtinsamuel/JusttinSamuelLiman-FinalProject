@@ -8,6 +8,7 @@ import {
   deleteCourse,
 } from "../store/slices/coursesSlice";
 import { useNavigate } from "react-router-dom";
+import "../Courses.css"; // 🔹 Import custom CSS
 
 export default function Courses() {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ export default function Courses() {
 
   const [title, setTitle] = useState("");
   const [editingId, setEditingId] = useState(null);
-  const [viewMode, setViewMode] = useState("list"); // "list" | "table"
+  const [viewMode, setViewMode] = useState("list");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
@@ -63,8 +64,8 @@ export default function Courses() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 border rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Courses</h1>
+    <div className="courses-container">
+      <h1 className="courses-title">Courses</h1>
 
       {error && <p className="text-red-600 mb-2">{error}</p>}
       {loading && <p className="text-gray-600 mb-2">Loading...</p>}
@@ -119,13 +120,10 @@ export default function Courses() {
       {viewMode === "list" && (
         <ul className="space-y-2">
           {items.map((course) => (
-            <li
-              key={course.id}
-              className="flex justify-between items-center border p-2 rounded shadow-sm"
-            >
+            <li key={course.id} className="course-list-item">
               <span
                 onClick={() => handleView(course.id)}
-                className="cursor-pointer text-blue-600 hover:underline"
+                className="course-title"
               >
                 {course.title}
               </span>
@@ -208,7 +206,8 @@ export default function Courses() {
               Confirm Delete
             </h2>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this course? This action cannot be undone.
+              Are you sure you want to delete this course? This action cannot be
+              undone.
             </p>
             <div className="flex justify-end gap-3">
               <button

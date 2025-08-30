@@ -1,0 +1,191 @@
+/* Modules.css */
+
+/* Container */
+.modules-container {
+  max-width: 900px;
+  margin: 2.5rem auto;
+  padding: 1.5rem;
+}
+
+/* Heading */
+.modules-title {
+  font-size: 1.875rem; /* 3xl */
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Error & Loading */
+.modules-error {
+  color: #dc2626; /* red-600 */
+  margin-bottom: 0.5rem;
+}
+.modules-loading {
+  color: #4b5563; /* gray-600 */
+  margin-bottom: 0.5rem;
+}
+
+/* Form */
+.modules-form {
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.modules-form input {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+}
+.modules-form input:focus {
+  outline: none;
+  border-color: #2563eb; /* blue-600 */
+  box-shadow: 0 0 0 2px #93c5fd; /* ring-blue-500 */
+}
+.modules-form button {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: background 0.2s;
+}
+.modules-form button:hover {
+  background: #1d4ed8;
+}
+
+/* Toggle view buttons */
+.modules-toggle {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.modules-toggle button {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+.modules-toggle .active {
+  background: #2563eb;
+  color: #fff;
+}
+.modules-toggle .inactive {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* List view */
+.modules-list {
+  display: grid;
+  gap: 1rem;
+}
+.modules-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.modules-card h2 {
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+.modules-card .actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.modules-card button {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  color: #fff;
+}
+.modules-card .view {
+  background: #16a34a;
+}
+.modules-card .view:hover {
+  background: #15803d;
+}
+.modules-card .edit {
+  background: #f59e0b;
+}
+.modules-card .edit:hover {
+  background: #d97706;
+}
+.modules-card .delete {
+  background: #dc2626;
+}
+.modules-card .delete:hover {
+  background: #b91c1c;
+}
+
+/* Table view */
+.modules-table {
+  overflow-x: auto;
+}
+.modules-table table {
+  min-width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.modules-table th {
+  background: #f3f4f6;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  text-align: left;
+}
+.modules-table td {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  text-align: center;
+}
+.modules-table .actions button {
+  margin: 0 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  color: #fff;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+.modal-box {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  max-width: 24rem;
+  width: 100%;
+  position: relative;
+}
+.modal-box h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #dc2626;
+  color: #fff;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+}
+.modal-close:hover {
+  background: #b91c1c;
+}

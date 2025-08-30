@@ -13,12 +13,8 @@ export default function Modules() {
   const [content_type, setContent_type] = useState("");
   const [editingId, setEditingId] = useState(null);
 
-  const [viewModule, setViewModule] = useState(null);
+  const [viewModule, setViewModule] = useState(null); // modal state
   const [viewMode, setViewMode] = useState("list"); // "list" | "table"
-
-  // NEW: delete modal state
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
 
   // fetch modules & courses
   const fetchModules = async () => {
@@ -63,7 +59,7 @@ export default function Modules() {
       setContent("");
       setContent_type("");
       setEditingId(null);
-      fetchModules();
+      fetchModules(); // refresh list
     } catch (err) {
       console.error(err);
       setError("Failed to save module");
@@ -77,27 +73,14 @@ export default function Modules() {
     setContent_type(module.content_type);
   };
 
-  // NEW: open modal first
-  const handleDelete = (id) => {
-    setDeleteId(id);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDelete = async () => {
+  const handleDelete = async (id) => {
     try {
-      await axiosInstance.delete(`/modules/${deleteId}`);
+      await axiosInstance.delete(`/modules/${id}`);
       fetchModules();
     } catch (err) {
       console.error(err);
       setError("Failed to delete module");
     }
-    setShowDeleteModal(false);
-    setDeleteId(null);
-  };
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-    setDeleteId(null);
   };
 
   const handleView = async (id) => {
@@ -261,7 +244,7 @@ export default function Modules() {
         </div>
       )}
 
-      {/* View Module Modal */}
+      {/* Modal */}
       {viewModule && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-lg max-w-md w-full relative">
@@ -278,34 +261,6 @@ export default function Modules() {
             >
               X
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">
-              Confirm Delete
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this module? This action cannot be undone.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={cancelDelete}
-                className="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
-              >
-                Delete
-              </button>
-            </div>
           </div>
         </div>
       )}

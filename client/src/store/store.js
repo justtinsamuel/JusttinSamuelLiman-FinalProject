@@ -5,7 +5,7 @@ import checkpointReducer from "./slices/checkpointsSlice";
 import moduleReducer from "./slices/modulesSlice";
 import submissionReducer from "./slices/submissionsSlice";
 import userReducer from "./slices/usersSlice";
-// import authReducer from "./slices/authSlice"; // sementara skip
+// import authReducer from "./slices/authSlice"; // belum full develop
 
 export const store = configureStore({
   reducer: {

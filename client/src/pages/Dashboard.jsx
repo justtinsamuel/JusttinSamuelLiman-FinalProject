@@ -1,8 +1,10 @@
+import "../Dashboard.css";
+
 export default function Dashboard() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-      <p>Welcome! This is your dashboard.</p>
+    <div className="dashboard-container">
+      <h1 className="dashboard-title">Dashboard</h1>
+      <p className="dashboard-text">Welcome! This is your dashboard.</p>
     </div>
   );
 }
