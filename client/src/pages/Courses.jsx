@@ -17,6 +17,8 @@ export default function Courses() {
   const [title, setTitle] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [viewMode, setViewMode] = useState("list"); // "list" | "table"
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchCourses());
@@ -39,7 +41,21 @@ export default function Courses() {
   };
 
   const handleDelete = (id) => {
-    dispatch(deleteCourse(id));
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    if (deleteId) {
+      dispatch(deleteCourse(deleteId));
+    }
+    setShowDeleteModal(false);
+    setDeleteId(null);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setDeleteId(null);
   };
 
   const handleView = (id) => {
@@ -107,7 +123,6 @@ export default function Courses() {
               key={course.id}
               className="flex justify-between items-center border p-2 rounded shadow-sm"
             >
-              {/* Klik judul course untuk lihat detail */}
               <span
                 onClick={() => handleView(course.id)}
                 className="cursor-pointer text-blue-600 hover:underline"
@@ -182,6 +197,34 @@ export default function Courses() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4 text-gray-800">
+              Confirm Delete
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this course? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

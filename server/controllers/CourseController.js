@@ -94,6 +94,14 @@ class CourseController {
   static async deleteCourse(req, res, next) {
     try {
       const { id } = req.params;
+      const { confirm } = req.body;
+
+      if (!confirm) {
+        return res
+          .status(400)
+          .json({ message: "Delete requires confirmation." });
+      }
+
       const result = await Course.findOne({
         where: { id, is_deleted: false },
       });

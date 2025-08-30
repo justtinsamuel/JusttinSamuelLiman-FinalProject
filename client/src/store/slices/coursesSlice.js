@@ -62,7 +62,7 @@ export const deleteCourse = createAsyncThunk(
   "courses/deleteCourse",
   async (id, { rejectWithValue }) => {
     try {
-      await axiosInstance.delete(`/courses/${id}`);
+      await axiosInstance.put(`/courses/${id}/delete`, { confirm: true });
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to delete course");

@@ -10,23 +10,28 @@ courseRouter.get(
   //   authorize("admin"),
   CourseController.getCourses
 );
+
 courseRouter.get(
   "/:id",
   // authorize("admin"),
   CourseController.getCourseById
 );
+
 courseRouter.post(
   "/",
   // authorize("admin"),
   CourseController.createCourse
 );
+
 courseRouter.put(
   "/:id",
   // authorize("admin"),
   CourseController.updateCourse
 );
-courseRouter.delete(
-  "/:id",
+
+// ganti dari DELETE → PUT /:id/delete
+courseRouter.put(
+  "/:id/delete",
   // authorize("admin"),
   CourseController.deleteCourse
 );

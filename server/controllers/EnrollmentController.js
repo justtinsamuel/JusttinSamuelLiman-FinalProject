@@ -4,11 +4,20 @@ class EnrollmentController {
   static async getEnrollments(req, res, next) {
     try {
       const enrollments = await Enrollment.findAll({
+        attributes: [
+          "id",
+          "UserId",
+          "CourseId",
+          "status",
+          "progress",
+          "enrolled_at",
+        ],
         include: [
           { model: User, attributes: ["id", "name", "email"] },
           { model: Course, attributes: ["id", "title"] },
         ],
       });
+
       res.json(enrollments);
     } catch (err) {
       next(err);
@@ -32,10 +41,12 @@ class EnrollmentController {
     try {
       const { UserId, CourseId } = req.body;
       if (!UserId || !CourseId) {
-        return res.status(400).json({ message: "UserId and CourseId are required" });
+        return res
+          .status(400)
+          .json({ message: "UserId and CourseId are required" });
       }
 
-      const newEnrollment = await Enrollment.create({
+      let newEnrollment = await Enrollment.create({
         UserId,
         CourseId,
         enrolled_at: new Date(),
@@ -43,8 +54,10 @@ class EnrollmentController {
         progress: 0,
       });
 
-      const result = await Enrollment.findOne({
-        where: { id: newEnrollment.id },
+      // isi ulang biar ada 'id'
+      await newEnrollment.reload();
+
+      const result = await Enrollment.findByPk(newEnrollment.id, {
         include: [
           { model: User, attributes: ["id", "name", "email"] },
           { model: Course, attributes: ["id", "title"] },

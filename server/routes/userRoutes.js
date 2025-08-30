@@ -16,7 +16,7 @@ userRouter.get(
   UserController.getUserById
 );
 userRouter.post(
-  "/add",
+  "/",
   // authorize("admin"),
   UserController.createUser
 );

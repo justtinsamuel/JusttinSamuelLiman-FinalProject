@@ -1,24 +1,39 @@
 "use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class Enrollment extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
       Enrollment.belongsTo(models.User, { foreignKey: "UserId" });
       Enrollment.belongsTo(models.Course, { foreignKey: "CourseId" });
     }
   }
+
   Enrollment.init(
     {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       enrolled_at: DataTypes.DATE,
       last_accessed_at: DataTypes.DATE,
       progress: DataTypes.DECIMAL,
       status: DataTypes.STRING,
+      UserId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
+      CourseId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Courses",
+          key: "id",
+        },
+      },
     },
     {
       sequelize,
@@ -26,5 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
     }
   );
+
   return Enrollment;
 };
+  

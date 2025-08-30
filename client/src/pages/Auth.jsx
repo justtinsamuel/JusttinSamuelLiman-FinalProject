@@ -19,13 +19,28 @@ export default function Auth() {
     setError("");
     try {
       if (isRegister) {
-        alert("Register belum aktif");
+        // 🔹 Panggil endpoint register
+        const res = await axiosInstance.post("/auth/register", {
+          name,
+          email,
+          password,
+          role: "Student", // default role kalau mau
+        });
+        alert("Registrasi berhasil, silakan login.");
+        setIsRegister(false); // balik ke form login
       } else {
-        const res = await axiosInstance.post("/auth/login", { email, password });
+        // 🔹 Panggil endpoint login
+        const res = await axiosInstance.post("/auth/login", {
+          email,
+          password,
+        });
         setUser(res.data.user);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login Failed.\n Pastikan Email dan Password Anda sudah sesuai.");
+      setError(
+        err.response?.data?.message ||
+          (isRegister ? "Register gagal." : "Login gagal.")
+      );
       setUser(null);
     } finally {
       setLoading(false);

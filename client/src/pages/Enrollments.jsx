@@ -24,6 +24,8 @@ export default function Enrollment() {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [viewMode, setViewMode] = useState("list"); // "list" | "table"
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchEnrollments());
@@ -51,7 +53,21 @@ export default function Enrollment() {
   };
 
   const handleDelete = (id) => {
-    dispatch(deleteEnrollment(id));
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    if (deleteId) {
+      dispatch(deleteEnrollment(deleteId)); // ✅ fixed
+    }
+    setShowDeleteModal(false);
+    setDeleteId(null);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setDeleteId(null);
   };
 
   return (
@@ -130,12 +146,12 @@ export default function Enrollment() {
       {/* List View */}
       {viewMode === "list" && (
         <ul className="space-y-2">
-          {enrollments.map((enrollment) => {
+          {enrollments.map((enrollment, index) => {
             const user = users.find((u) => u.id === enrollment.UserId);
             const course = courses.find((c) => c.id === enrollment.CourseId);
-            const key = enrollment.id
-              ? enrollment.id
-              : `${enrollment.UserId}-${enrollment.CourseId}`;
+            const key =
+              enrollment.id ??
+              `${enrollment.UserId}-${enrollment.CourseId}-${index}`;
 
             return (
               <li
@@ -179,12 +195,12 @@ export default function Enrollment() {
               </tr>
             </thead>
             <tbody>
-              {enrollments.map((enrollment) => {
+              {enrollments.map((enrollment, index) => {
                 const user = users.find((u) => u.id === enrollment.UserId);
                 const course = courses.find((c) => c.id === enrollment.CourseId);
-                const key = enrollment.id
-                  ? enrollment.id
-                  : `${enrollment.UserId}-${enrollment.CourseId}`;
+                const key =
+                  enrollment.id ??
+                  `${enrollment.UserId}-${enrollment.CourseId}-${index}`;
 
                 return (
                   <tr key={key} className="text-center">
@@ -213,6 +229,35 @@ export default function Enrollment() {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4 text-gray-800">
+              Confirm Delete
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this enrollment? This action
+              cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
